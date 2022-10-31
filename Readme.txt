@@ -46,3 +46,15 @@ cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 cd webapp/cas-server-webapp-tomcat
 ../../gradlew build bootRun --parallel -x test -x check --offline --configure-on-demand --build-cache --stacktrace
 ```
+
+
+## puppeteer test
+```
+yarn add puppeteer
+
+cd develop/GitHub/cas-server/ci/tests/puppeteer
+yarn install
+
+./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
+./ci/tests/puppeteer/run.sh --scenario ./ci/tests/puppeteer/scenarios/gua-login
+```
