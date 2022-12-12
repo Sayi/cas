@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.passwordless;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -26,6 +27,11 @@ import java.io.Serializable;
 public class PasswordlessAuthenticationCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 6726382874579042117L;
+
+    /**
+     * Flag to indicate if paswordless authentication is enabled.
+     */
+    private boolean enabled = true;
 
     /**
      * Allow passwordless authentication to skip its own flow

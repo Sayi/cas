@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandlerTests;
+import org.apereo.cas.authentication.DisablePasswordlessTokenAuthenticationTests;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStoreTests;
 import org.apereo.cas.impl.account.JsonPasswordlessUserAccountStoreTests;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStoreTests;
@@ -24,7 +25,8 @@ import org.junit.platform.suite.api.Suite;
     GroovyPasswordlessUserAccountStoreTests.class,
     SimplePasswordlessUserAccountStoreTests.class,
     InMemoryPasswordlessTokenRepositoryTests.class,
-    PasswordlessTokenAuthenticationHandlerTests.class
+    PasswordlessTokenAuthenticationHandlerTests.class,
+    DisablePasswordlessTokenAuthenticationTests.class,
 })
 @Suite
 public class AllTestsSuite {
