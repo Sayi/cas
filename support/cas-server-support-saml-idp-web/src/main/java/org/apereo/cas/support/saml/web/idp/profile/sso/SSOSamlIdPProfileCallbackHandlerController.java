@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -57,7 +57,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE
+        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE
             && !request.getParameterMap().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE)) {
             return new ModelAndView(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
         }
@@ -78,7 +78,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
+        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
             val storage = request.getParameter(BrowserSessionStorage.KEY_SESSION_STORAGE);
             val context = new JEEContext(request, response);
             configurationContext.getSessionStore().buildFromTrackableSession(context, storage);
