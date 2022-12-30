@@ -12,11 +12,12 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This is {@link Pac4jSamlClientProperties}.
@@ -33,6 +34,12 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
 
     @Serial
     private static final long serialVersionUID = -862819796533384951L;
+
+    /**
+     * Metadata configuration properties.
+     */
+    @NestedConfigurationProperty
+    private Pac4jSamlClientMetadataProperties metadata = new Pac4jSamlClientMetadataProperties();
 
     /**
      * The destination binding to use
@@ -63,12 +70,6 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      */
     @RequiredProperty
     private String keystorePath = Beans.getTempFilePath("samlSpKeystore", ".jks");
-
-    /**
-     * The metadata location of the identity provider that is to handle authentications.
-     */
-    @RequiredProperty
-    private String identityProviderMetadataPath;
 
     /**
      * Once you have an authenticated session on the identity provider, usually it won't prompt you again to enter your
@@ -102,12 +103,6 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      */
     @RequiredProperty
     private String serviceProviderEntityId = "https://apereo.org/cas/samlsp";
-
-    /**
-     * Location of the SP metadata to use and generate.
-     */
-    @RequiredProperty
-    private String serviceProviderMetadataPath = Beans.getTempFilePath("samlSpMetadata", ".xml");
 
     /**
      * Whether authentication requests should be tagged as forced auth.
@@ -235,7 +230,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * List of attributes requested by the service provider
      * that would be put into the service provider metadata.
      */
-    private List<ServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>(0);
+    private List<Pac4jSamlServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>(0);
 
     /**
      * Collection of signing signature blocked algorithms, if any, to override the global defaults.
@@ -303,33 +298,36 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      */
     private String saml2AttributeConverter;
 
-    @RequiresModule(name = "cas-server-support-pac4j-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class ServiceProviderRequestedAttribute implements Serializable {
-        @Serial
-        private static final long serialVersionUID = -862819796533384951L;
+    /**
+     * Logouts are only successful if the IdP was able to inform all services, otherwise it will
+     * respond with {@code PartialLogout}. This setting allows clients such as CAS to ignore such server-side behavior.
+     * If the IdP reports back a partial logout, this setting instructs CAS whether it should accept or deny that response.
+     */
+    private boolean partialLogoutAsSuccess = true;
 
-        /**
-         * Attribute name.
-         */
-        private String name;
+    /**
+     * When validating the response, ensure it has a value set for the {@code Destination} attribute.
+     */
+    private boolean responseDestinationMandatory = true;
 
-        /**
-         * Attribute friendly name.
-         */
-        private String friendlyName;
+    /**
+     * When generating SAML2 metadata, configure and set the request initiator location attribute.
+     */
+    private String requestInitiatorUrl;
 
-        /**
-         * Attribute name format.
-         */
-        private String nameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
+    /**
+     * When generating SAML2 metadata, configure and set the single logout service URL attribute.
+     */
+    private String singleLogoutServiceUrl;
 
-        /**
-         * Whether this attribute is required and should
-         * be marked so in the metadata.
-         */
-        private boolean required;
-    }
+    /**
+     * Control the logout response binding type during logout operations as invoked
+     * by an external IdP and in response to logout requests.
+     */
+    private String logoutResponseBindingType;
+
+    /**
+     * When generating SAML2 metadata, configure and set the list of supported protocols in the metadata.
+     */
+    private List<String> supportedProtocols = Stream.of("urn:oasis:names:tc:SAML:2.0:protocol").toList();
 }

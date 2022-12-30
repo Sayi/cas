@@ -32,11 +32,7 @@ maintenance and release planning, especially when it comes to addressing critica
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## New & Noteworthy
-
-The following items are new improvements and enhancements presented in this release.
-
-### JDK Requirement
+## System Requirements
 
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
@@ -45,10 +41,32 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### SAML2 Delegated Authentication Metadata
+
+SAML2 service provider metadata used and managed during [delegated authentication](../integration/Delegate-Authentication-SAML.html)
+can now be stored in relational databases.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `378` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
+### Authentication Geolocation via Maxmind
+
+Geolocating authentication requests via Maxmind can now support [Maxmind Web Services](../authentication/GeoTracking-Authentication-Requests.html).
+
 ## Other Stuff
 
-
+- The session cookie (typically and by default named `DISSESSION`) typically used for distributed session management can now be signed and encrypted in 
+  scenarios where CAS is acting as an OAUTH or OpenID Connect provider, or is delegating authentication to an external identity provider.
 
 ## Library Upgrades
 
-
+- Groovy
+- Pac4j
+- Nimbus
+- Amazon SDK
+- Spring
+- Spring Boot
+- Mockito

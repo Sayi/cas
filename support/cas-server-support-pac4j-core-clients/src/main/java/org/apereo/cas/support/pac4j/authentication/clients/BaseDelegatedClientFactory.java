@@ -468,22 +468,35 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             .stream()
             .filter(saml -> saml.isEnabled()
                             && StringUtils.isNotBlank(saml.getKeystorePath())
-                            && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath())
-                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
-                            && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
+                            && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
+                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
             .map(saml -> {
                 val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
-                    saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
+                    saml.getPrivateKeyPassword(), saml.getMetadata().getIdentityProviderMetadataPath());
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
-                    __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays())));
+                    __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
                 FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType);
                 FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
+
+                cfg.setPartialLogoutTreatedAsSuccess(saml.isPartialLogoutAsSuccess());
+                cfg.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
+                cfg.setSupportedProtocols(saml.getSupportedProtocols());
+
+                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> cfg.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
+                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> cfg.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
+                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> cfg.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
+
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
-                cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
+
+                FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(), location -> {
+                    val resource = ResourceUtils.getRawResourceFrom(location);
+                    cfg.setServiceProviderMetadataResource(resource);
+                });
+
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
                 cfg.setForceAuth(saml.isForceAuth());
@@ -521,7 +534,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                     });
 
                 FunctionUtils.doIf(saml.getAssertionConsumerServiceIndex() >= 0,
-                    __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex()));
+                    __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
 
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
