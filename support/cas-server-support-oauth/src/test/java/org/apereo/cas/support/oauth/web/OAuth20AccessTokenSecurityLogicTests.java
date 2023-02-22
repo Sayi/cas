@@ -51,11 +51,12 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         val mockClient = mock(DirectClient.class);
         when(mockClient.getName()).thenReturn("MockIndirectClient");
         when(mockClient.isInitialized()).thenReturn(true);
-        when(mockClient.getCredentials(any(), any(), any()))
-            .thenReturn(Optional.of(new UsernamePasswordCredentials("casuser", "Mellon")));
+        val testCredential = new UsernamePasswordCredentials("casuser", "Mellon");
+        when(mockClient.getCredentials(any())).thenReturn(Optional.of(testCredential));
+        when(mockClient.validateCredentials(any(), any())).thenReturn(Optional.of(testCredential));
         val profile = new CommonProfile();
         profile.setId(UUID.randomUUID().toString());
-        when(mockClient.getUserProfile(any(), any(), any())).thenReturn(Optional.of(profile));
+        when(mockClient.getUserProfile(any(), any())).thenReturn(Optional.of(profile));
 
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
