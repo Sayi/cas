@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.monitor.Monitorable;
+
 /**
  * Authenticates one or more credentials.
  *
@@ -8,7 +10,12 @@ package org.apereo.cas.authentication;
  * @since 3.0.0
  */
 @FunctionalInterface
+@Monitorable
 public interface AuthenticationManager {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "casAuthenticationManager";
 
     /**
      * Authentication method attribute name.

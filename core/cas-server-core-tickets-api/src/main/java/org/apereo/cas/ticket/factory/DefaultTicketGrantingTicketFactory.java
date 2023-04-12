@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -61,59 +63,30 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
         return TicketGrantingTicket.class;
     }
 
-    /**
-     * Produce ticket.
-     *
-     * @param <T>            the type parameter
-     * @param authentication the authentication
-     * @param tgtId          the tgt id
-     * @param service        the service
-     * @param clazz          the clazz
-     * @return the ticket.
-     */
     protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication,
                                                                final String tgtId,
                                                                final Service service,
                                                                final Class<T> clazz) {
-        val expirationPolicy = getTicketGrantingTicketExpirationPolicy(service);
-        val result = new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy);
+        val expirationPolicy = getTicketGrantingTicketExpirationPolicy(service, authentication);
+        val result = new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy.orElseThrow());
         if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                                         + " is of type " + result.getClass()
-                                         + " when we were expecting " + clazz);
+            throw new ClassCastException("Result [" + result + "] is of type " + result.getClass() + " when we were expecting " + clazz);
         }
         return (T) result;
     }
 
-    /**
-     * Retrieve the ticket granting ticket expiration policy of the service.
-     *
-     * @param service the service
-     * @return the expiration policy
-     */
-    protected ExpirationPolicy getTicketGrantingTicketExpirationPolicy(final Service service) {
-        val registeredService = servicesManager.findServiceBy(service);
-        if (registeredService != null) {
-            val policy = registeredService.getTicketGrantingTicketExpirationPolicy();
-            if (policy != null) {
-                return policy.toExpirationPolicy()
-                    .orElseGet(ticketGrantingTicketExpirationPolicy::buildTicketExpirationPolicy);
-            }
-        }
-        return ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy();
+    protected Optional<ExpirationPolicy> getTicketGrantingTicketExpirationPolicy(final Service service,
+                                                                                 final Authentication authentication) {
+        return Optional.ofNullable(servicesManager.findServiceBy(service))
+            .map(RegisteredService::getTicketGrantingTicketExpirationPolicy)
+            .map(policy -> policy.toExpirationPolicy().orElseGet(ticketGrantingTicketExpirationPolicy::buildTicketExpirationPolicy));
     }
 
-    /**
-     * Produce ticket identifier string.
-     *
-     * @param authentication the authentication
-     * @return the ticket id.
-     */
     protected String produceTicketIdentifier(final Authentication authentication) {
-        var tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
-        if (this.cipherExecutor != null && this.cipherExecutor.isEnabled()) {
+        var tgtId = ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
+        if (cipherExecutor != null && cipherExecutor.isEnabled()) {
             LOGGER.trace("Attempting to encode ticket-granting ticket [{}]", tgtId);
-            tgtId = this.cipherExecutor.encode(tgtId);
+            tgtId = cipherExecutor.encode(tgtId);
             LOGGER.trace("Encoded ticket-granting ticket id [{}]", tgtId);
         }
         return tgtId;

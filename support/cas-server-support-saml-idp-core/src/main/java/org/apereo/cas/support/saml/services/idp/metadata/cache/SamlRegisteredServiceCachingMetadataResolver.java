@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
@@ -16,12 +17,13 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Monitorable
 public interface SamlRegisteredServiceCachingMetadataResolver {
 
     /**
      * Bean name of the default implementation class.
      */
-    String DEFAULT_BEAN_NAME = "defaultSamlRegisteredServiceCachingMetadataResolver";
+    String BEAN_NAME = "defaultSamlRegisteredServiceCachingMetadataResolver";
 
     /**
      * Resolve chaining metadata resolver.

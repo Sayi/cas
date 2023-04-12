@@ -101,7 +101,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.cherwell.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30205883-84174ebc-949f-11e7-9afc-a66c2ab19f59.png" height="48" width="110"></a>
 
-<a href="https://www.bynder.com">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/30205852-69921a5e-949f-11e7-8326-ba4c00fceba4.png" height="48" width="120"></a>
 
 <a href="https://www.everbridge.com/">
@@ -143,7 +143,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.polleverywhere.com/">
 <img src="https://user-images.githubusercontent.com/1205228/36302795-026f57d2-12c7-11e8-931e-0f8700df1864.png" height="58" width="180"></a>
 
-<a href="https://www.blackbaud.com/files/support/helpfiles/auth/content/auth-saml.html">
+<a href="https://www.blackbaud.com">
 <img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="150"></a>
 
 <a href="#">
@@ -152,7 +152,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.warpwire.com/">
 <img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="150"></a>
 
-<a href="https://rocket.chat/docs/administrator-guides/authentication/saml/">
+<a href="https://rocket.chat">
 <img src="https://user-images.githubusercontent.com/1205228/39877039-1128c7ae-548a-11e8-8735-1abf90883df6.png" height="58" width="150"></a>
 
 <a href="https://armssoftware.com/">

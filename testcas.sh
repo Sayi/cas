@@ -177,6 +177,10 @@ while (( "$#" )); do
             cipher)
                 task+="testCipher "
                 ;;
+            gcp)
+                isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh
+                task+="testGCP "
+                ;;
             web)
                 task+="testWeb "
                 ;;
@@ -298,6 +302,12 @@ while (( "$#" )); do
             saml2)
                 task+="testSAML2 "
                 ;;
+            samlresponse)
+                task+="testSAMLResponse "
+                ;;
+            samlattributes|samlattrs)
+                task+="testSAMLAttributes "
+                ;;
             saml)
                 task+="testSAML "
                 ;;
@@ -386,10 +396,6 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 task+="testLdap "
                 ;;
-            couchbase)
-                isDockerOnLinux && ./ci/tests/couchbase/run-couchbase-server.sh
-                task+="testCouchbase "
-                ;;
             mongodbmfa)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDbMFA "
@@ -397,10 +403,6 @@ while (( "$#" )); do
             mongo|mongodb)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
-                ;;
-            couchdb)
-                isDockerOnLinux && ./ci/tests/couchdb/run-couchdb-server.sh
-                task+="testCouchDb "
                 ;;
             mysql)
                 isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh
